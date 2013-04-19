@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<definitions id="Definition"
+             targetNamespace="http://www.omg.org/bpmn20"
+             typeLanguage="http://www.java.com/javaTypes"
+             expressionLanguage="http://www.mvel.org/2.0"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             xmlns:g="http://www.jboss.org/drools/flow/gpd"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:tns="http://www.jboss.org/drools">
+
+  <itemDefinition id="_studentidItem" structureRef="String" />
+  <itemDefinition id="_progressItem" structureRef="String" />
+  <itemDefinition id="_readinessItem" structureRef="String" />
+  <itemDefinition id="_examItem" structureRef="String" />
+
+  <itemDefinition id="_343C1BA4-61DF-45E9-B908-A98F34641699-studentidItem" structureRef="String" />
+  <itemDefinition id="_343C1BA4-61DF-45E9-B908-A98F34641699-progressItem" structureRef="String" />
+  <itemDefinition id="_343C1BA4-61DF-45E9-B908-A98F34641699-readinessItem" structureRef="String" />
+  <itemDefinition id="_343C1BA4-61DF-45E9-B908-A98F34641699-examItem" structureRef="String" />
+
+  <itemDefinition id="_B2CEA002-6B02-4837-BD55-C4182734D09C-studentidItem" structureRef="String" />
+  <itemDefinition id="_B2CEA002-6B02-4837-BD55-C4182734D09C-progressItem" structureRef="String" />
+  <itemDefinition id="_B2CEA002-6B02-4837-BD55-C4182734D09C-readinessItem" structureRef="String" />
+  <itemDefinition id="_B2CEA002-6B02-4837-BD55-C4182734D09C-examItem" structureRef="String" />
+
+  <process processType="Private" isExecutable="true" id="phdprocess" name="phdprocess" tns:packageName="PhdProcess" >
+
+    <!-- process variables -->
+    <property id="studentid" itemSubjectRef="_studentidItem"/>
+    <property id="progress" itemSubjectRef="_progressItem"/>
+    <property id="readiness" itemSubjectRef="_readinessItem"/>
+    <property id="exam" itemSubjectRef="_examItem"/>
+
+    <!-- nodes -->
+    <startEvent id="_4B6C6038-3DF3-44A2-A673-4BA5EB786D79" name="" />
+    <userTask id="_343C1BA4-61DF-45E9-B908-A98F34641699" name="Evaluate Readiness" >
+      <ioSpecification>
+        <dataInput id="_343C1BA4-61DF-45E9-B908-A98F34641699_in.studentidInput" name="in.studentid" />
+        <dataInput id="_343C1BA4-61DF-45E9-B908-A98F34641699_TaskNameInput" name="TaskName" />
+        <dataInput id="_343C1BA4-61DF-45E9-B908-A98F34641699_GroupIdInput" name="GroupId" />
+        <dataOutput id="_343C1BA4-61DF-45E9-B908-A98F34641699_out.readinessOutput" name="out.readiness" />
+        <inputSet>
+          <dataInputRefs>_343C1BA4-61DF-45E9-B908-A98F34641699_in.studentidInput</dataInputRefs>
+          <dataInputRefs>_343C1BA4-61DF-45E9-B908-A98F34641699_TaskNameInput</dataInputRefs>
+          <dataInputRefs>_343C1BA4-61DF-45E9-B908-A98F34641699_GroupIdInput</dataInputRefs>
+        </inputSet>
+        <outputSet>
+          <dataOutputRefs>_343C1BA4-61DF-45E9-B908-A98F34641699_out.readinessOutput</dataOutputRefs>
+        </outputSet>
+      </ioSpecification>
+      <dataInputAssociation>
+        <sourceRef>studentid</sourceRef>
+        <targetRef>_343C1BA4-61DF-45E9-B908-A98F34641699_in.studentidInput</targetRef>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_343C1BA4-61DF-45E9-B908-A98F34641699_TaskNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">EvaluateReadiness</from>
+          <to xsi:type="tFormalExpression">_343C1BA4-61DF-45E9-B908-A98F34641699_TaskNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_343C1BA4-61DF-45E9-B908-A98F34641699_GroupIdInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">staff</from>
+          <to xsi:type="tFormalExpression">_343C1BA4-61DF-45E9-B908-A98F34641699_GroupIdInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataOutputAssociation>
+        <sourceRef>_343C1BA4-61DF-45E9-B908-A98F34641699_out.readinessOutput</sourceRef>
+        <targetRef>readiness</targetRef>
+      </dataOutputAssociation>
+    </userTask>
+    <userTask id="_B2CEA002-6B02-4837-BD55-C4182734D09C" name="Conduct Progress Review" >
+      <ioSpecification>
+        <dataInput id="_B2CEA002-6B02-4837-BD55-C4182734D09C_in.studentidInput" name="in.studentid" />
+        <dataInput id="_B2CEA002-6B02-4837-BD55-C4182734D09C_TaskNameInput" name="TaskName" />
+        <dataInput id="_B2CEA002-6B02-4837-BD55-C4182734D09C_GroupIdInput" name="GroupId" />
+        <dataOutput id="_B2CEA002-6B02-4837-BD55-C4182734D09C_out.progressOutput" name="out.progress" />
+        <inputSet>
+          <dataInputRefs>_B2CEA002-6B02-4837-BD55-C4182734D09C_in.studentidInput</dataInputRefs>
+          <dataInputRefs>_B2CEA002-6B02-4837-BD55-C4182734D09C_TaskNameInput</dataInputRefs>
+          <dataInputRefs>_B2CEA002-6B02-4837-BD55-C4182734D09C_GroupIdInput</dataInputRefs>
+        </inputSet>
+        <outputSet>
+          <dataOutputRefs>_B2CEA002-6B02-4837-BD55-C4182734D09C_out.progressOutput</dataOutputRefs>
+        </outputSet>
+      </ioSpecification>
+      <dataInputAssociation>
+        <sourceRef>studentid</sourceRef>
+        <targetRef>_B2CEA002-6B02-4837-BD55-C4182734D09C_in.studentidInput</targetRef>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_B2CEA002-6B02-4837-BD55-C4182734D09C_TaskNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">ProgressReview</from>
+          <to xsi:type="tFormalExpression">_B2CEA002-6B02-4837-BD55-C4182734D09C_TaskNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_B2CEA002-6B02-4837-BD55-C4182734D09C_GroupIdInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">staff</from>
+          <to xsi:type="tFormalExpression">_B2CEA002-6B02-4837-BD55-C4182734D09C_GroupIdInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataOutputAssociation>
+        <sourceRef>_B2CEA002-6B02-4837-BD55-C4182734D09C_out.progressOutput</sourceRef>
+        <targetRef>progress</targetRef>
+      </dataOutputAssociation>
+    </userTask>
+    <endEvent id="_8D8BB5B3-B7CC-4F78-83A1-2D2CD4105AB8" name="" />
+
+    <!-- connections -->
+    <sequenceFlow id="_4B6C6038-3DF3-44A2-A673-4BA5EB786D79-_343C1BA4-61DF-45E9-B908-A98F34641699" sourceRef="_4B6C6038-3DF3-44A2-A673-4BA5EB786D79" targetRef="_343C1BA4-61DF-45E9-B908-A98F34641699" />
+    <sequenceFlow id="_343C1BA4-61DF-45E9-B908-A98F34641699-_B2CEA002-6B02-4837-BD55-C4182734D09C" sourceRef="_343C1BA4-61DF-45E9-B908-A98F34641699" targetRef="_B2CEA002-6B02-4837-BD55-C4182734D09C" />
+    <sequenceFlow id="_B2CEA002-6B02-4837-BD55-C4182734D09C-_8D8BB5B3-B7CC-4F78-83A1-2D2CD4105AB8" sourceRef="_B2CEA002-6B02-4837-BD55-C4182734D09C" targetRef="_8D8BB5B3-B7CC-4F78-83A1-2D2CD4105AB8" />
+
+  </process>
+
+  <bpmndi:BPMNDiagram>
+    <bpmndi:BPMNPlane bpmnElement="phdprocess" >
+      <bpmndi:BPMNShape bpmnElement="_4B6C6038-3DF3-44A2-A673-4BA5EB786D79" >
+        <dc:Bounds x="69" y="173" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_343C1BA4-61DF-45E9-B908-A98F34641699" >
+        <dc:Bounds x="153" y="157" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_B2CEA002-6B02-4837-BD55-C4182734D09C" >
+        <dc:Bounds x="298" y="156" width="111" height="82" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_8D8BB5B3-B7CC-4F78-83A1-2D2CD4105AB8" >
+        <dc:Bounds x="430" y="169" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_4B6C6038-3DF3-44A2-A673-4BA5EB786D79-_343C1BA4-61DF-45E9-B908-A98F34641699" >
+        <di:waypoint x="93" y="197" />
+        <di:waypoint x="203" y="197" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_343C1BA4-61DF-45E9-B908-A98F34641699-_B2CEA002-6B02-4837-BD55-C4182734D09C" >
+        <di:waypoint x="203" y="197" />
+        <di:waypoint x="353" y="197" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_B2CEA002-6B02-4837-BD55-C4182734D09C-_8D8BB5B3-B7CC-4F78-83A1-2D2CD4105AB8" >
+        <di:waypoint x="353" y="197" />
+        <di:waypoint x="454" y="193" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>
