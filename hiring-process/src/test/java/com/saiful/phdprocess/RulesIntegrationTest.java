@@ -15,8 +15,10 @@ package com.saiful.phdprocess;
  * limitations under the License.
  */
 
-
-import static org.junit.Assert.*;
+import com.saiful.phdprocess.Student;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +28,9 @@ import java.util.Map;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
+
+//import org.drools.event.rule.ActivationCreatedEvent;
+import org.drools.core.event.ActivationCreatedEvent;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -37,17 +42,21 @@ import org.jbpm.runtime.manager.impl.RuntimeEnvironmentBuilder;
 import org.jbpm.runtime.manager.impl.cdi.InjectableRegisterableItemsFactory;
 import org.jbpm.runtime.manager.util.TestUtil;
 import org.jbpm.services.task.utils.ContentMarshallerHelper;
+import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.api.event.process.DefaultProcessEventListener;
+import org.kie.api.event.process.ProcessCompletedEvent;
+import org.kie.api.event.process.ProcessStartedEvent;
+import org.kie.api.event.rule.DefaultAgendaEventListener;
+import org.kie.api.event.rule.RuleFlowGroupActivatedEvent;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.process.ProcessInstance;
-import org.kie.internal.KnowledgeBase;
-import org.kie.internal.builder.KnowledgeBuilder;
-import org.kie.internal.builder.KnowledgeBuilderFactory;
+import org.kie.api.runtime.rule.FactHandle;
 import org.kie.internal.io.ResourceFactory;
 import org.kie.internal.runtime.StatefulKnowledgeSession;
 import org.kie.internal.runtime.manager.Context;
@@ -59,6 +68,7 @@ import org.kie.internal.task.api.TaskService;
 import org.kie.internal.task.api.model.Content;
 import org.kie.internal.task.api.model.Task;
 import org.kie.internal.task.api.model.TaskSummary;
+
 
 import bitronix.tm.resource.jdbc.PoolingDataSource;
 
@@ -157,8 +167,9 @@ public class RulesIntegrationTest {
                 .entityManagerFactory(emf)
                 .registerableItemsFactory(InjectableRegisterableItemsFactory.getFactory(beanManager, null));
 
-        builder.addAsset(ResourceFactory.newClassPathResource("phdrepo/BPMN2-RuleTask.drl"), ResourceType.DRL);
-        builder.addAsset(ResourceFactory.newClassPathResource("phdrepo/BPMN2-RuleTask.bpmn2"), ResourceType.BPMN2);
+        //builder.addAsset(ResourceFactory.newClassPathResource("phdrepo/BPMN2-RuleTask2.drl"), ResourceType.DRL);
+        //builder.addAsset(ResourceFactory.newClassPathResource("phdrepo/mapping.drl"), ResourceType.DRL);
+        builder.addAsset(ResourceFactory.newClassPathResource("phdrepo/BPMN2-RuleTask2.bpmn2"), ResourceType.BPMN2);
 
         RuntimeManager manager = managerFactory.newSingletonRuntimeManager(builder.get());
         testHiringProcess(manager, EmptyContext.get());
@@ -169,23 +180,93 @@ public class RulesIntegrationTest {
 
     private void testHiringProcess(RuntimeManager manager, Context context) {
 
-        RuntimeEngine runtime = manager.getRuntimeEngine(context);
-        KieSession ksession = runtime.getKieSession();
-        //TaskService taskService = runtime.getTaskService();
+ 
+    	RuntimeEngine runtime = manager.getRuntimeEngine(context);
+        final KieSession ksession = runtime.getKieSession();
+ 
+        ksession.addEventListener(
+                new DefaultAgendaEventListener() {
+                    //@Override
+                    public void activationCreated(ActivationCreatedEvent event) {
+                        System.out.println("Firing All the Rules! " + event);
+                        ksession.fireAllRules();
+                    }
+
+                    @Override
+                    public void afterRuleFlowGroupActivated(RuleFlowGroupActivatedEvent event) {
+                        System.out.println("Firing All the Rules! " + event);
+                    	ksession.fireAllRules();
+                    }
+                });
+        
+
+        
+        TaskService taskService = runtime.getTaskService();
 
         assertNotNull(runtime);
         assertNotNull(ksession);
         
+//      List<String> list = new ArrayList<String>();
+//		ksession.setGlobal("list", list);
+		
+		Student student = new Student("Saiful", 19);
+        Map<String, Object> params = new HashMap<String, Object>();
+        //params.put("student", student);
+        params.put("studentid", "saiful");
         
-        System.out.println("Loading process BPMN2-RuleTask.bpmn2"); 
+        ProcessInstance processInstance = ksession.createProcessInstance("com.saiful.phdprocess.DynamicAdaptation", params);
+        System.out.println("Variables: " + ((WorkflowProcessInstanceImpl) processInstance).getVariables());
 
-        List<String> list = new ArrayList<String>();
-		ksession.setGlobal("list", list);
-		ProcessInstance processInstance = ksession.startProcess("RuleTask");
-		assertTrue(processInstance.getState() == ProcessInstance.STATE_ACTIVE);
+        final FactHandle processHandle = ksession.insert(processInstance);
+
+        ksession.addEventListener(new DefaultProcessEventListener() {
+            @Override
+            public void beforeProcessStarted(ProcessStartedEvent event) {
+                System.out.println("Firing All the Rules! " + event);
+                ksession.fireAllRules();
+            }
+
+            @Override
+            public void afterProcessStarted(ProcessStartedEvent event) {
+                System.out.println("Firing All the Rules! " + event);
+            	ksession.fireAllRules();
+            }
+
+            @Override
+            public void afterProcessCompleted(ProcessCompletedEvent event) {
+                System.out.println("Firing All the Rules! " + event);
+            	ksession.retract(processHandle);
+            }
+        });
+        
+        ksession.startProcessInstance(processInstance.getId());
+
+        assertEquals(processInstance.getState(), ProcessInstance.STATE_PENDING);
+        
 		ksession.fireAllRules();
-		assertTrue(list.size() == 1);
-        assertProcessInstanceCompleted(processInstance.getId(), ksession);        
+
+		List<TaskSummary> tasks = taskService.getTasksAssignedByGroup("staff", "en-UK");
+        TaskSummary readinessReview = tasks.get(0);
+        
+//        Task readinessReviewTask = taskService.getTaskById(readinessReview.getId());
+//        Content contentById = taskService.getContentById(readinessReviewTask.getTaskData().getDocumentContentId());
+//        assertNotNull(contentById);
+//
+//        Map<String, Object> taskContent = (Map<String, Object>) ContentMarshallerHelper.unmarshall(contentById.getContent(), null);
+//        assertEquals("saiful", taskContent.get("in.studentid"));
+        
+        taskService.claim(readinessReview.getId(), "paul");
+        taskService.start(readinessReview.getId(), "paul");
+
+        Map<String, Object> hrOutput = new HashMap<String, Object>();
+        hrOutput.put("out.readiness", "no");
+
+        taskService.complete(readinessReview.getId(), "paul", hrOutput);
+        //assertNotNull(contentById);
+        
+
+		//assertTrue(list.size() == 1);
+        assertProcessInstanceCompleted(processInstance.getId(), ksession);   
         
         System.out.println(">>> Removed Test>");
     }
