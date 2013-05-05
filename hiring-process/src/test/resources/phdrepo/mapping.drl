@@ -1,7 +1,10 @@
-package com.sample;
+package  com.saiful.phdprocess;
 
 import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
-import com.saiful.phdprocess.ProcessVariable;
+import com.saiful.phdprocess.*;
+import java.io.Serializable;
+import java.util.*;
+
 
 declare ProcessVariable
     @typesafe(false)
@@ -43,8 +46,8 @@ rule "init"
     when
         WorkflowProcessInstanceImpl($id: id, $vars: variables)
     then
-        System.out.println(" I'm going to insert "+$vars.keySet().size() +" process variables");
-        for(int i = 0; i < $vars.keySet().size(); i++){
-            insertLogical(new ProcessVariable($id, (String)$vars.keySet(),$vars.values().toArray()[i]));
-        }
+        System.out.println(" I'm going to insert "+$vars.keySet().size() +" process variables " + $vars.keySet());
+        //for(int i = 0; i < $vars.keySet().size(); i++){
+        //   insertLogical(new ProcessVariable($id, $vars.keySet(), $vars.values().toArray()[i]));
+        //}
 end

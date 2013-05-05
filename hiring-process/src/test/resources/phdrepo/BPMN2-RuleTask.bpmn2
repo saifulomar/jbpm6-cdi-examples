@@ -12,14 +12,20 @@
              xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
              xmlns:tns="http://www.jboss.org/drools">
 
+  <itemDefinition id="_studentItem" structureRef="com.saiful.phdprocess.Student" />
+
   <process processType="Private" isExecutable="true" id="RuleTask" name="RuleTask Process" tns:packageName="com.sample" >
+
+    <!-- process variables -->
+    <property id="student" itemSubjectRef="_studentItem"/>
 
     <!-- nodes -->
     <startEvent id="_1" name="StartProcess" />
     <endEvent id="_3" name="EndProcess" >
         <terminateEventDefinition/>
     </endEvent>
-    <businessRuleTask id="_4" name="Rule" g:ruleFlowGroup="myRules" />
+    <businessRuleTask id="_4" name="Rule" g:ruleFlowGroup="myRules" >
+    </businessRuleTask>
 
     <!-- connections -->
     <sequenceFlow id="_4-_3" sourceRef="_4" targetRef="_3" />

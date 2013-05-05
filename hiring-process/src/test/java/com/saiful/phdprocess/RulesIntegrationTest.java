@@ -167,8 +167,8 @@ public class RulesIntegrationTest {
                 .entityManagerFactory(emf)
                 .registerableItemsFactory(InjectableRegisterableItemsFactory.getFactory(beanManager, null));
 
-        //builder.addAsset(ResourceFactory.newClassPathResource("phdrepo/BPMN2-RuleTask2.drl"), ResourceType.DRL);
-        //builder.addAsset(ResourceFactory.newClassPathResource("phdrepo/mapping.drl"), ResourceType.DRL);
+        builder.addAsset(ResourceFactory.newClassPathResource("phdrepo/mapping.drl"), ResourceType.DRL);
+        builder.addAsset(ResourceFactory.newClassPathResource("phdrepo/BPMN2-RuleTask2.drl"), ResourceType.DRL);
         builder.addAsset(ResourceFactory.newClassPathResource("phdrepo/BPMN2-RuleTask2.bpmn2"), ResourceType.BPMN2);
 
         RuntimeManager manager = managerFactory.newSingletonRuntimeManager(builder.get());
@@ -210,9 +210,10 @@ public class RulesIntegrationTest {
 //		ksession.setGlobal("list", list);
 		
 		Student student = new Student("Saiful", 19);
+
         Map<String, Object> params = new HashMap<String, Object>();
-        //params.put("student", student);
-        params.put("studentid", "saiful");
+        params.put("student", student);
+        //params.put("studentid", "saiful");
         
         ProcessInstance processInstance = ksession.createProcessInstance("com.saiful.phdprocess.DynamicAdaptation", params);
         System.out.println("Variables: " + ((WorkflowProcessInstanceImpl) processInstance).getVariables());
